@@ -1,2 +1,2 @@
 --require rails_helper
---format 'dochumetation'
+--format documentation
