@@ -2,7 +2,7 @@ class UsersController < ApplicationController
   before_action :set_article, only: [:show, :update, :destroy]
 
   def index
-    binding.pry
+    # binding.pry
     @users = User.all
     render json: @users
   end
