@@ -48,6 +48,7 @@ class UsersController < ApplicationController
     end
 
     def set_article
-      @article = Article.find(params[:id])
+      # @article = Article.find(params[:id])
+      @user = User.find(params[:id])
     end
 end
