@@ -1,16 +1,13 @@
 require 'rails_helper'
 
 RSpec.describe "Users", type: :request do
+
   describe "GET /users" do
     subject { get(users_path) }
     before { 3.times { create(:user) } }
 
     it "ユーザーの一覧が取得できる" do
-
-      # get users_path
       subject
-
-      # binding.pry
       res = JSON.parse(response.body)
       expect(res.length).to eq 3
       expect(res[0].keys).to eq ["account", "name", "email"]
@@ -35,7 +32,7 @@ RSpec.describe "Users", type: :request do
         expect(res["email"]).to eq user.email
 
         expect(response).to have_http_status(200)
-     end
+      end
     end
 
     context "指定した id のユーザーが存在しないとき" do
@@ -43,12 +40,34 @@ RSpec.describe "Users", type: :request do
 
       it "ユーザーが見つからない" do
        expect { subject }.to raise_error(ActiveRecord::RecordNotFound)
-     end
-   end
+      end
+    end
   end
 
   describe "POST /users" do
-    it "ユーザーのレコードが作成できる" do
+    subject { post(users_path, params: params) }
+
+    context "適切なパラメーターを送信したとき" do
+      let(:params) do
+        { user: attributes_for(:user) }
+      end
+
+      fit "ユーザーのレコードが作成できる" do
+        expect { subject }.to change { User.count }.by(1)
+        res = JSON.parse(response.body)
+        expect(res["name"]).to eq params[:user][:name]
+        expect(res["account"]).to eq params[:user][:account]
+        expect(res["email"]).to eq params[:user][:email]
+        expect(response).to have_http_status(200)
+      end
+    end
+
+    context "不適切なパラメーターを送信したとき" do
+      let(:params) { attributes_for(:user) }
+
+      fit "ユーザーのレコードの作成に失敗する" do
+        expect { subject }.to raise_error(ActionController::ParameterMissing)
+      end
     end
   end
 
@@ -62,8 +81,9 @@ RSpec.describe "Users", type: :request do
     let(:user_id) { user.id }
     let!(:user) { create(:user) }
 
-    fit "任意のユーザーのレコードを削除できる" do
+    it "任意のユーザーのレコードを削除できる" do
      expect { subject }.to change { User.count }.by(-1)
     end
- end
+  end
 end
+# end
