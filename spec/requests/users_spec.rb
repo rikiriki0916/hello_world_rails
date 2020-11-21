@@ -25,7 +25,7 @@ RSpec.describe "Users", type: :request do
       let(:user_id) { user.id }
       let(:user) { create(:user) }
 
-      fit "任意のユーザーのレコードが取得できる" do
+      it "任意のユーザーのレコードが取得できる" do
         subject
         # binding.pry
 
@@ -41,12 +41,12 @@ RSpec.describe "Users", type: :request do
     context "指定した id のユーザーが存在しないとき" do
       let(:user_id) { 100000 }
 
-      fit "ユーザーが見つからない" do
+      it "ユーザーが見つからない" do
        expect { subject }.to raise_error(ActiveRecord::RecordNotFound)
      end
    end
   end
-  
+
   describe "POST /users" do
     it "ユーザーのレコードが作成できる" do
     end
@@ -58,7 +58,12 @@ RSpec.describe "Users", type: :request do
   end
 
   describe "DELETE /users/:id" do
-    it "任意のユーザーのレコードを削除できる" do
+    subject { delete(user_path(user_id)) }
+    let(:user_id) { user.id }
+    let!(:user) { create(:user) }
+
+    fit "任意のユーザーのレコードを削除できる" do
+     expect { subject }.to change { User.count }.by(-1)
     end
-  end
+ end
 end
