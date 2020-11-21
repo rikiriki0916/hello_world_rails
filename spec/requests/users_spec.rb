@@ -5,12 +5,12 @@ RSpec.describe "Users", type: :request do
     subject { get(users_path) }
     before { 3.times { create(:user) } }
 
-    fit "ユーザーの一覧が取得できる" do
+    it "ユーザーの一覧が取得できる" do
 
       # get users_path
       subject
 
-      binding.pry
+      # binding.pry
       res = JSON.parse(response.body)
       expect(res.length).to eq 3
       expect(res[0].keys).to eq ["account", "name", "email"]
@@ -19,10 +19,34 @@ RSpec.describe "Users", type: :request do
   end
 
   describe "GET /users/:id" do
-    it "任意のユーザーのレコードが取得できる" do
-    end
-  end
+    subject { get(user_path(user_id)) }
 
+    context "指定した id のユーザーが存在するとき" do
+      let(:user_id) { user.id }
+      let(:user) { create(:user) }
+
+      fit "任意のユーザーのレコードが取得できる" do
+        subject
+        # binding.pry
+
+        res = JSON.parse(response.body)
+        expect(res["account"]).to eq user.account
+        expect(res["name"]).to eq user.name
+        expect(res["email"]).to eq user.email
+
+        expect(response).to have_http_status(200)
+     end
+    end
+
+    context "指定した id のユーザーが存在しないとき" do
+      let(:user_id) { 100000 }
+
+      fit "ユーザーが見つからない" do
+       expect { subject }.to raise_error(ActiveRecord::RecordNotFound)
+     end
+   end
+  end
+  
   describe "POST /users" do
     it "ユーザーのレコードが作成できる" do
     end
