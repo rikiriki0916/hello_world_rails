@@ -52,7 +52,7 @@ RSpec.describe "Users", type: :request do
         { user: attributes_for(:user) }
       end
 
-      fit "ユーザーのレコードが作成できる" do
+      it "ユーザーのレコードが作成できる" do
         expect { subject }.to change { User.count }.by(1)
         res = JSON.parse(response.body)
         expect(res["name"]).to eq params[:user][:name]
@@ -65,7 +65,7 @@ RSpec.describe "Users", type: :request do
     context "不適切なパラメーターを送信したとき" do
       let(:params) { attributes_for(:user) }
 
-      fit "ユーザーのレコードの作成に失敗する" do
+      it "ユーザーのレコードの作成に失敗する" do
         expect { subject }.to raise_error(ActionController::ParameterMissing)
       end
     end
@@ -95,9 +95,10 @@ RSpec.describe "Users", type: :request do
     let(:user_id) { user.id }
     let!(:user) { create(:user) }
 
-    it "任意のユーザーのレコードを削除できる" do
+
+
+    fit "任意のユーザーのレコードを削除できる" do
      expect { subject }.to change { User.count }.by(-1)
     end
   end
 end
-# end
